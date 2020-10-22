@@ -3,53 +3,74 @@
 #include <utility>
 #include <map>
 
-const int64_t md = 1000000007;
+const int64_t kMd = 1000000007;
 
-// Class for a Matrix
+struct Edge
+{
+    int64_t room_from;
+    int64_t room_to;
+};
+
+// Creating and reading edges
+std::vector <Edge> ReadEdges(int64_t number_of_paths,
+                             std::istream& input = std::cin);
+
+// Writing a number of possible variants
+void Write(int64_t variants, std::ostream& output = std::cout);
+
 class Matrix {
  private:
-    std::vector < std::vector <int64_t> > matrix;
-    int64_t Size;
+    std::vector < std::vector <int64_t> > matrix_;
+    int64_t size_;
  public:
     int64_t GetSize();
-    Matrix(int64_t N, int64_t x);
-    void Read(int64_t M);
+    Matrix(int64_t number_of_rooms, int64_t digit);
+    void Create(std::vector <Edge> edges, int64_t number_of_path);
     int64_t get(int64_t i, int64_t j);
     void set(int64_t i, int64_t j, int64_t value);
 };
 
-// Getting the size of the Matrix
 int64_t Matrix::GetSize();
 
-// Creating a Matrix N*N with 0
-Matrix::Matrix(int64_t N, int64_t x);
+// Creating an identity matrix N*N
+Matrix::Matrix(int64_t number_of_rooms, int64_t digit);
 
-// Reading the Matrix
-void Matrix::Read(int64_t M);
+void Matrix::Create(std::vector <Edge> edges, int64_t number_of_path);
 
-// Getter
 int64_t Matrix::get(int64_t i, int64_t j);
 
-// Setter
 void Matrix::set(int64_t i, int64_t j, int64_t value);
 
 // Matrix Multiplication
-Matrix Multiplication(Matrix a, Matrix b);
+Matrix MultiplicationOfMatrices(Matrix a, Matrix b);
 
-// Matrix in Power (Uses a function of Multiplication)
-Matrix InPower(Matrix a, int64_t k);
+// Exponentiation of a matrix
+Matrix MatrixInPower(Matrix a, int64_t k);
 
-// Calculating an answer for vertex 0
-int64_t Sum_calc(Matrix a, int64_t N);
+// The number of possible paths from room#0 with given length
+int64_t SumCalc(Matrix a, int64_t number_of_rooms);
+
+int64_t Run(int64_t number_of_rooms, int64_t number_of_path,
+            int64_t path_length, std::vector <Edge> edges);
+
+int64_t ReadNumber(std::istream& input = std::cin);
+int64_t ReadNumber(std::istream& input);
+
+std::vector <Edge> ReadEdges(int64_t number_of_paths, std::istream& input);
+
+void Write(int64_t variants, std::ostream& output);
 
 int main() {
     std::ios_base::sync_with_stdio(false);
     std::cin.tie(nullptr);
-    int64_t N, M, K;
-    std::cin >> N >> M >> K;
-    Matrix a(N, 0);
-    a.Read(M);
-    a = InPower(a, K);
-    std::cout << Sum_calc(a, N);
+
+    const auto &number_of_rooms = ReadNumber();
+    const auto &number_of_path = ReadNumber();
+    const auto &path_length = ReadNumber();
+    const auto &edges = ReadEdges(number_of_path);
+    const auto &variants = Run(number_of_rooms, number_of_path,
+                               path_length, edges);
+    Write(variants);
+
     return 0;
 }
