@@ -3,7 +3,7 @@
 #include <utility>
 #include <map>
 
-const int64_t kMd = 1000000007;
+const int64_t kMod = 1000000007;
 
 struct Edge
 {
@@ -40,7 +40,7 @@ int64_t Matrix::GetSize() {
 
 // Creating an identity matrix N*N
 Matrix::Matrix(int64_t matrix_size, int64_t digit) {
-    std::vector <int64_t> str(matrix_size, 0);
+    const std::vector <int64_t> str(matrix_size, 0);
     for (int64_t i = 0; i < matrix_size; ++i)
         this->matrix_.push_back(str);
     for (int64_t i = 0; i < matrix_size; ++i)
@@ -55,14 +55,13 @@ Matrix::Matrix(std::vector <Edge> edges, int64_t matrix_size,
     for (int64_t i = 0; i < matrix_size; ++i)
         this->matrix_.push_back(str);
 
-    int64_t x, y;
     for (int64_t i = 0; i < number_of_edges; ++i) {
         this->matrix_[edges[i].vertex_from - 1][edges[i].vertex_to - 1]++;
     }
 }
 
-int64_t Matrix::get(int64_t i, int64_t j) {
-    return this->matrix_[i][j];
+int64_t Matrix::get(int64_t vertex_first, int64_t vertex_second) {
+    return this->matrix_[vertex_first][vertex_second];
 }
 
 void Matrix::set(int64_t i, int64_t j, int64_t value) {
@@ -70,37 +69,38 @@ void Matrix::set(int64_t i, int64_t j, int64_t value) {
 }
 
 // Matrix Multiplication
-Matrix MultiplicationOfMatrices(Matrix a, Matrix b) {
-    int64_t N = a.GetSize();
-    Matrix c(N, 0);
-    for (int64_t i = 0; i < N; ++i)
-        for (int64_t j = 0; j < N; ++j) {
-            c.set(i, j, 0);
-            for (int64_t k = 0; k < N; ++k)
-                c.set(i, j, (a.get(i, k) * b.get(k, j) % kMd +
-                      c.get(i, j)) % kMd);
+Matrix MultiplicationOfMatrices(Matrix matrix_first, Matrix matrix_second) {
+    const int64_t matrix_size = matrix_first.GetSize();
+    Matrix matrix_result(matrix_size, 0);
+    for (int64_t i = 0; i < matrix_size; ++i)
+        for (int64_t j = 0; j < matrix_size; ++j) {
+            matrix_result.set(i, j, 0);
+            for (int64_t k = 0; k < matrix_size; ++k)
+                matrix_result.set(i, j, (matrix_first.get(i, k) *
+                                  matrix_second.get(k, j) % kMod +
+                                  matrix_result.get(i, j)) % kMod);
         }
-    return c;
+    return matrix_result;
 }
 
 // Exponentiation of a matrix
-Matrix MatrixInPower(Matrix a, int64_t k) {
-    int64_t N = a.GetSize();
-    Matrix res(N, 1);
-    while (k) {
-        if (k & 1)
-            res = MultiplicationOfMatrices(res, a);
-        a = MultiplicationOfMatrices(a, a);
-        k >>= 1;
+Matrix MatrixInPower(Matrix matrix, int64_t power) {
+    const int64_t matrix_size = matrix.GetSize();
+    Matrix result_matrix(matrix_size, 1);
+    while (power) {
+        if (power & 1)
+            result_matrix = MultiplicationOfMatrices(result_matrix, matrix);
+        matrix = MultiplicationOfMatrices(matrix, matrix);
+        power >>= 1;
     }
-    return res;
+    return result_matrix;
 }
 
 // The number of possible paths from room#0 with given length
 int64_t SumCalculation(Matrix matrix, int64_t matrix_size) {
     int64_t sum = 0;
     for (int64_t i = 0; i < matrix_size; ++i)
-        sum = (sum + matrix.get(0, i)) % kMd;
+        sum = (sum + matrix.get(0, i)) % kMod;
     return sum;
 }
 
