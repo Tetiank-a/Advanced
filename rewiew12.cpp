@@ -4,76 +4,99 @@
 #include <map>
 
 const int64_t md = 1000000007;
-std::vector < std::vector <int64_t> > ed;
 
-std::vector < std::vector <int64_t> >
-Multiplication(std::vector < std::vector <int64_t> > a,
-    std::vector < std::vector <int64_t> > b, int64_t N) {
-    std::vector < std::vector <int64_t> > c = ed;
+class Matrix {
+ private:
+    std::vector < std::vector <int64_t> > matrix;
+    int64_t Size;
+ public:
+    int64_t GetSize();
+    Matrix(int64_t N, int64_t x);
+    void Read(int64_t M);
+    int64_t get(int64_t i, int64_t j);
+    void set(int64_t i, int64_t j, int64_t value);
+};
+
+// Getting the size of the Matrix
+int64_t Matrix::GetSize() {
+    return this->Size;
+}
+
+// Creating a Matrix N*N with 0
+Matrix::Matrix(int64_t N, int64_t x) {
+    std::vector <int64_t> str(N, 0);
+    for (int64_t i = 0; i < N; ++i)
+        this->matrix.push_back(str);
+    for (int64_t i = 0; i < N; ++i)
+        this->matrix[i][i] = x;
+    this->Size = N;
+}
+
+// Reading the Matrix
+void Matrix::Read(int64_t M) {
+    int64_t x, y;
+    for (int64_t i = 0; i < M; ++i) {
+        std::cin >> x >> y;
+        this->matrix[x - 1][y - 1]++;
+    }
+}
+
+// Getter
+int64_t Matrix::get(int64_t i, int64_t j) {
+    return this->matrix[i][j];
+}
+
+// Setter
+void Matrix::set(int64_t i, int64_t j, int64_t value) {
+    this->matrix[i][j] = value;
+}
+
+// Matrix Multiplication
+Matrix Multiplication(Matrix a, Matrix b) {
+    int64_t N = a.GetSize();
+    Matrix c(N, 0);
     for (int64_t i = 0; i < N; ++i)
         for (int64_t j = 0; j < N; ++j) {
-            c[i][j] = 0;
+            c.set(i, j, 0);
             for (int64_t k = 0; k < N; ++k)
-                c[i][j] = (a[i][k] * b[k][j] % md + c[i][j]) % md;
+                c.set(i, j, (a.get(i, k) * b.get(k, j) % md +
+                      c.get(i, j)) % md);
         }
     return c;
 }
 
-std::vector < std::vector <int64_t> >
-Pow(std::vector < std::vector <int64_t> > a, int64_t k, int64_t N) {
-    std::vector < std::vector <int64_t> > res = ed;
+// Matrix in Power
+Matrix InPower(Matrix a, int64_t k) {
+    int64_t N = a.GetSize();
+    Matrix res(N, 1);
     while (k) {
         if (k & 1)
-            res = Multiplication(res, a, N);
-        a = Multiplication(a, a, N);
+            res = Multiplication(res, a);
+        a = Multiplication(a, a);
         k >>= 1;
     }
     return res;
 }
 
-void Creating_Ed(int64_t N) {
-    std::vector <int64_t> str(N, 0);
-    for (int64_t i = 0; i < N; ++i)
-        ed.push_back(str);
-    for (int64_t i = 0; i < N; ++i)
-        ed[i][i] = 1;
-}
-
-void Creating_Main(std::vector < std::vector <int64_t> >* a,
-                   int64_t N, int64_t m) {
-    int64_t x, y;
-    for (int64_t i = 0; i < N; ++i)
-        for (int64_t j = 0; j < N; ++j)
-            (*a)[i].push_back(0);
-    for (int64_t i = 0; i < m; ++i) {
-        std::cin >> x >> y;
-        (*a)[x - 1][y - 1]++;
-    }
-}
-
-int64_t Sum_calc(std::vector < std::vector <int64_t> > a, int64_t N) {
+int64_t Sum_calc(Matrix a, int64_t N) {
     int64_t sum = 0;
     for (int64_t i = 0; i < N; ++i)
-        sum = (sum + a[0][i]) % md;
+        sum = (sum + a.get(0, i)) % md;
     return sum;
+}
+
+void Run() {
+    int64_t N, M, K;
+    std::cin >> N >> M >> K;
+    Matrix a(N, 0);
+    a.Read(M);
+    a = InPower(a, K);
+    std::cout << Sum_calc(a, N);
 }
 
 int main() {
     std::ios_base::sync_with_stdio(false);
     std::cin.tie(nullptr);
-
-    int64_t k, m, sum = 0, N;
-
-    std::cin >> N >> m >> k;
-
-    std::vector < std::vector <int64_t> > a(N);
-    Creating_Main(&a, N, m);
-
-    Creating_Ed(N);
-
-    a = Pow(a, k, N);
-    sum = Sum_calc(a, N);
-
-    std::cout << sum;
+    Run();
     return 0;
 }
