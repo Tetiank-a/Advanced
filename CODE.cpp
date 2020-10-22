@@ -15,11 +15,11 @@ struct Edge
 int64_t ReadNumber(std::istream& input = std::cin);
 
 // Creating and reading edges
-std::vector<Edge> ReadEdges(const int64_t &number_of_edges,
-    std::istream& input = std::cin);
+std::vector<Edge> ReadEdges(const int64_t& number_of_edges,
+                            std::istream& input = std::cin);
 
 // Writing a number of possible variants
-void Write(const int64_t &variants, std::ostream& output = std::cout);
+void Write(const int64_t& ways, std::ostream& output = std::cout);
 
 class Matrix {
  private:
@@ -28,20 +28,19 @@ class Matrix {
  public:
     int64_t GetSize() const;
     Matrix(const int64_t& matrix_size, const int64_t& digit);
-    Matrix(const std::vector<Edge> &edges, const int64_t &matrix_size,
-           const int64_t &number_of_edges);
-    int64_t get(const int64_t & vertex_first,
-                const int64_t & vertex_second) const;
-    void set(const int64_t &vertex_first, const int64_t &vertex_second,
-             const int64_t &value);
+    Matrix(const std::vector<Edge>& edges, const int64_t& matrix_size);
+    int64_t get(const int64_t& vertex_first,
+                const int64_t& vertex_second) const;
+    void set(const int64_t& vertex_first, const int64_t& vertex_second,
+             const int64_t& value);
 };
 
 int64_t Matrix::GetSize() const {
     return this->size_;
 }
 
-// Creating an identity matrix N*N
-Matrix::Matrix(const int64_t &matrix_size, const int64_t &digit) {
+// Creating an identity matrix N*N, digit - 0 or 1
+Matrix::Matrix(const int64_t& matrix_size, const int64_t& digit) {
     const std::vector<int64_t> str(matrix_size, 0);
     for (int64_t i = 0; i < matrix_size; ++i)
         this->matrix_.push_back(str);
@@ -50,14 +49,13 @@ Matrix::Matrix(const int64_t &matrix_size, const int64_t &digit) {
     this->size_ = matrix_size;
 }
 
-Matrix::Matrix(const std::vector<Edge>& edges, const int64_t& matrix_size,
-               const int64_t& number_of_edges) {
+Matrix::Matrix(const std::vector<Edge>& edges, const int64_t& matrix_size) {
     this->size_ = matrix_size;
     std::vector<int64_t> str(matrix_size, 0);
     for (int64_t i = 0; i < matrix_size; ++i)
         this->matrix_.push_back(str);
 
-    for (int64_t i = 0; i < number_of_edges; ++i) {
+    for (int64_t i = 0; i < edges.size(); ++i) {
         this->matrix_[edges[i].vertex_from - 1][edges[i].vertex_to - 1]++;
     }
 }
@@ -73,8 +71,8 @@ void Matrix::set(const int64_t& vertex_first, const int64_t& vertex_second,
 }
 
 // Matrix Multiplication
-Matrix MultiplicationOfMatrices(const Matrix &matrix_first,
-                                const Matrix &matrix_second) {
+Matrix MultiplicationOfMatrices(const Matrix& matrix_first,
+                                const Matrix& matrix_second) {
     const int64_t matrix_size = matrix_first.GetSize();
     Matrix matrix_result(matrix_size, 0);
     for (int64_t i = 0; i < matrix_size; ++i)
@@ -89,31 +87,32 @@ Matrix MultiplicationOfMatrices(const Matrix &matrix_first,
 }
 
 // Exponentiation of a matrix
-Matrix MatrixInPower(Matrix matrix, int64_t power) {
-    const int64_t matrix_size = matrix.GetSize();
-    Matrix result_matrix(matrix_size, 1);
+Matrix MatrixInPower(const Matrix& matrix, int64_t power) {
+    Matrix delta_matrix = matrix;
+    Matrix result_matrix(delta_matrix.GetSize(), 1);
     while (power) {
         if (power & 1)
-            result_matrix = MultiplicationOfMatrices(result_matrix, matrix);
-        matrix = MultiplicationOfMatrices(matrix, matrix);
+            result_matrix = MultiplicationOfMatrices(result_matrix,
+                                                     delta_matrix);
+        delta_matrix = MultiplicationOfMatrices(delta_matrix, delta_matrix);
         power >>= 1;
     }
     return result_matrix;
 }
 
 // The number of possible paths from room#0 with given length
-int64_t SumCalculation(const Matrix &matrix, const int64_t &matrix_size) {
+int64_t SumCalculation(const Matrix& matrix, const int64_t& matrix_size) {
     int64_t sum = 0;
     for (int64_t i = 0; i < matrix_size; ++i)
         sum = (sum + matrix.get(0, i)) % MODULE;
     return sum;
 }
 
-int64_t CountNumberOfVariants(const int64_t &number_of_rooms,
-                              const int64_t &number_of_edges,
-                              const int64_t &path_length,
-                              const std::vector<Edge> &edges) {
-    Matrix rooms_matrix(edges, number_of_rooms, number_of_edges);
+int64_t CountNumberOfVariants(const int64_t& number_of_rooms,
+                              const int64_t& number_of_edges,
+                              const int64_t& path_length,
+                              const std::vector<Edge>& edges) {
+    Matrix rooms_matrix(edges, number_of_rooms);
     rooms_matrix = MatrixInPower(rooms_matrix, path_length);
     return SumCalculation(rooms_matrix, number_of_rooms);
 }
@@ -124,7 +123,7 @@ int64_t ReadNumber(std::istream& input) {
     return value;
 }
 
-std::vector<Edge> ReadEdges(const int64_t &number_of_edges,
+std::vector<Edge> ReadEdges(const int64_t& number_of_edges,
                             std::istream& input) {
     int64_t x, y;
     std::vector<Edge> edges;
@@ -139,8 +138,8 @@ std::vector<Edge> ReadEdges(const int64_t &number_of_edges,
     return edges;
 }
 
-void Write(const int64_t &variants, std::ostream& output) {
-    output << variants << '\n';
+void Write(const int64_t& ways, std::ostream& output) {
+    output << ways << '\n';
 }
 
 int main() {
@@ -151,10 +150,10 @@ int main() {
     const auto& number_of_edges = ReadNumber();
     const auto& path_length = ReadNumber();
     const auto& edges = ReadEdges(number_of_edges);
-    const auto& variants = CountNumberOfVariants(number_of_rooms,
+    const auto& ways = CountNumberOfVariants(number_of_rooms,
         number_of_edges,
         path_length, edges);
-    Write(variants);
+    Write(ways);
 
     return 0;
 }
