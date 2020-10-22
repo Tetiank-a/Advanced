@@ -108,17 +108,17 @@ int64_t SumCalculation(const Matrix& matrix, const int64_t& matrix_size) {
     return sum;
 }
 
-int64_t CountNumberOfVariants(const int64_t& number_of_rooms,
-                              const int64_t& number_of_edges,
-                              const int64_t& path_length,
-                              const std::vector<Edge>& edges) {
+int64_t CountNumberOfWays(const int64_t& number_of_rooms,
+                          const int64_t& number_of_edges,
+                          const int64_t& path_length,
+                          const std::vector<Edge>& edges) {
     Matrix rooms_matrix(edges, number_of_rooms);
     rooms_matrix = MatrixInPower(rooms_matrix, path_length);
     return SumCalculation(rooms_matrix, number_of_rooms);
 }
 
 int64_t ReadNumber(std::istream& input) {
-    int value;
+    int64_t value;
     input >> value;
     return value;
 }
@@ -150,9 +150,9 @@ int main() {
     const auto& number_of_edges = ReadNumber();
     const auto& path_length = ReadNumber();
     const auto& edges = ReadEdges(number_of_edges);
-    const auto& ways = CountNumberOfVariants(number_of_rooms,
-        number_of_edges,
-        path_length, edges);
+    const auto& ways = CountNumberOfWays(number_of_rooms,
+                                         number_of_edges,
+                                         path_length, edges);
     Write(ways);
 
     return 0;
