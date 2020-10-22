@@ -30,17 +30,6 @@ class Matrix {
     void set(int64_t i, int64_t j, int64_t value);
 };
 
-int64_t Matrix::GetSize();
-
-// Creating an identity matrix N*N
-Matrix::Matrix(int64_t number_of_rooms, int64_t digit);
-
-void Matrix::Create(std::vector <Edge> edges, int64_t number_of_path);
-
-int64_t Matrix::get(int64_t i, int64_t j);
-
-void Matrix::set(int64_t i, int64_t j, int64_t value);
-
 // Matrix Multiplication
 Matrix MultiplicationOfMatrices(Matrix a, Matrix b);
 
