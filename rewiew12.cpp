@@ -78,6 +78,7 @@ Matrix InPower(Matrix a, int64_t k) {
     return res;
 }
 
+// Calculating an answer for vertex 0
 int64_t Sum_calc(Matrix a, int64_t N) {
     int64_t sum = 0;
     for (int64_t i = 0; i < N; ++i)
@@ -85,6 +86,7 @@ int64_t Sum_calc(Matrix a, int64_t N) {
     return sum;
 }
 
+// Reading and solving
 void Run() {
     int64_t N, M, K;
     std::cin >> N >> M >> K;
