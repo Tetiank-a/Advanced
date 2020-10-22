@@ -15,11 +15,11 @@ struct Edge
 int64_t ReadNumber(std::istream& input = std::cin);
 
 // Creating and reading edges
-std::vector<Edge> ReadEdges(const int64_t &number_of_edges,
-    std::istream& input = std::cin);
+std::vector<Edge> ReadEdges(const int64_t& number_of_edges,
+                            std::istream& input = std::cin);
 
 // Writing a number of possible variants
-void Write(const int64_t &variants, std::ostream& output = std::cout);
+void Write(const int64_t& ways, std::ostream& output = std::cout);
 
 class Matrix {
  private:
@@ -28,35 +28,34 @@ class Matrix {
  public:
     int64_t GetSize() const;
     Matrix(const int64_t& matrix_size, const int64_t& digit);
-    Matrix(const std::vector<Edge> &edges, const int64_t &matrix_size,
-           const int64_t &number_of_edges);
-    int64_t get(const int64_t & vertex_first,
-                const int64_t & vertex_second) const;
-    void set(const int64_t &vertex_first, const int64_t &vertex_second,
-             const int64_t &value);
+    Matrix(const std::vector<Edge>& edges, const int64_t& matrix_size);
+    int64_t get(const int64_t& vertex_first,
+                const int64_t& vertex_second) const;
+    void set(const int64_t& vertex_first, const int64_t& vertex_second,
+             const int64_t& value);
 };
 
 // Matrix Multiplication
-Matrix MultiplicationOfMatrices(const Matrix &matrix_first,
-                                const Matrix &matrix_second);
+Matrix MultiplicationOfMatrices(const Matrix& matrix_first,
+                                const Matrix& matrix_second);
 
 // Exponentiation of a matrix
-Matrix MatrixInPower(Matrix matrix, int64_t power);
+Matrix MatrixInPower(const Matrix& matrix, int64_t power);
 
 // The number of possible paths from room#0 with given length
-int64_t SumCalculation(const Matrix &matrix, const int64_t &matrix_size);
+int64_t SumCalculation(const Matrix& matrix, const int64_t& matrix_size);
 
-int64_t CountNumberOfVariants(const int64_t &number_of_rooms,
-                              const int64_t &number_of_edges,
-                              const int64_t &path_length,
-                              const std::vector<Edge> &edges);
+int64_t CountNumberOfWays(const int64_t& number_of_rooms,
+                          const int64_t& number_of_edges,
+                          const int64_t& path_length,
+                          const std::vector<Edge>& edges);
 
 int64_t ReadNumber(std::istream& input);
 
-std::vector<Edge> ReadEdges(const int64_t &number_of_edges,
+std::vector<Edge> ReadEdges(const int64_t& number_of_edges,
                             std::istream& input);
 
-void Write(const int64_t &variants, std::ostream& output);
+void Write(const int64_t& ways, std::ostream& output);
 
 int main() {
     std::ios_base::sync_with_stdio(false);
@@ -66,10 +65,10 @@ int main() {
     const auto& number_of_edges = ReadNumber();
     const auto& path_length = ReadNumber();
     const auto& edges = ReadEdges(number_of_edges);
-    const auto& variants = CountNumberOfVariants(number_of_rooms,
-                                                 number_of_edges,
-                                                 path_length, edges);
-    Write(variants);
+    const auto& ways = CountNumberOfWays(number_of_rooms,
+                                         number_of_edges,
+                                         path_length, edges);
+    Write(ways);
 
     return 0;
 }
