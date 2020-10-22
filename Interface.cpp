@@ -67,8 +67,8 @@ int main() {
     const auto& path_length = ReadNumber();
     const auto& edges = ReadEdges(number_of_edges);
     const auto& variants = CountNumberOfVariants(number_of_rooms,
-        number_of_edges,
-        path_length, edges);
+                                                 number_of_edges,
+                                                 path_length, edges);
     Write(variants);
 
     return 0;
