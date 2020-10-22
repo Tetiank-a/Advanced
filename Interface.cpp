@@ -3,7 +3,7 @@
 #include <utility>
 #include <map>
 
-const int64_t kMd = 1000000007;
+const int64_t kMod = 1000000007;
 
 struct Edge
 {
@@ -35,10 +35,10 @@ class Matrix {
 };
 
 // Matrix Multiplication
-Matrix MultiplicationOfMatrices(Matrix a, Matrix b);
+Matrix MultiplicationOfMatrices(Matrix matrix_first, Matrix matrix_second);
 
 // Exponentiation of a matrix
-Matrix MatrixInPower(Matrix a, int64_t k);
+Matrix MatrixInPower(Matrix matrix, int64_t power);
 
 // The number of possible paths from room#0 with given length
 int64_t SumCalculation(Matrix matrix, int64_t matrix_size);
