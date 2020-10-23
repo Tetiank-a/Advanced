@@ -3,7 +3,7 @@
 #include <utility>
 #include <map>
 
-const int64_t MODULE = 1000000007;
+const int64_t MODULUS = 1000000007;
 
 struct Edge
 {
@@ -71,17 +71,17 @@ void Matrix::set(const int64_t& vertex_first, const int64_t& vertex_second,
 }
 
 // Matrix Multiplication
-Matrix MultiplicationOfMatrices(const Matrix& matrix_first,
-                                const Matrix& matrix_second) {
-    const int64_t matrix_size = matrix_first.GetSize();
+Matrix MultiplicationOfMatrices(const Matrix& matrix_left,
+                                const Matrix& matrix_right) {
+    const int64_t matrix_size = matrix_left.GetSize();
     Matrix matrix_result(matrix_size, 0);
     for (int64_t i = 0; i < matrix_size; ++i)
         for (int64_t j = 0; j < matrix_size; ++j) {
             matrix_result.set(i, j, 0);
             for (int64_t k = 0; k < matrix_size; ++k)
-                matrix_result.set(i, j, (matrix_first.get(i, k) *
-                    matrix_second.get(k, j) % MODULE +
-                    matrix_result.get(i, j)) % MODULE);
+                matrix_result.set(i, j, (matrix_left.get(i, k) *
+                    matrix_right.get(k, j) % MODULUS +
+                    matrix_result.get(i, j)) % MODULUS);
         }
     return matrix_result;
 }
@@ -100,21 +100,15 @@ Matrix MatrixInPower(const Matrix& matrix, int64_t power) {
     return result_matrix;
 }
 
-// The number of possible paths from room#0 with given length
-int64_t SumCalculation(const Matrix& matrix, const int64_t& matrix_size) {
-    int64_t sum = 0;
-    for (int64_t i = 0; i < matrix_size; ++i)
-        sum = (sum + matrix.get(0, i)) % MODULE;
-    return sum;
-}
-
 int64_t CountNumberOfWays(const int64_t& number_of_rooms,
-                          const int64_t& number_of_edges,
                           const int64_t& path_length,
                           const std::vector<Edge>& edges) {
     Matrix rooms_matrix(edges, number_of_rooms);
     rooms_matrix = MatrixInPower(rooms_matrix, path_length);
-    return SumCalculation(rooms_matrix, number_of_rooms);
+    int64_t sum = 0;
+    for (int64_t i = 0; i < number_of_rooms; ++i)
+        sum = (sum + rooms_matrix.get(0, i)) % MODULUS;
+    return sum;
 }
 
 int64_t ReadNumber(std::istream& input) {
@@ -151,7 +145,6 @@ int main() {
     const auto& path_length = ReadNumber();
     const auto& edges = ReadEdges(number_of_edges);
     const auto& ways = CountNumberOfWays(number_of_rooms,
-                                         number_of_edges,
                                          path_length, edges);
     Write(ways);
 
