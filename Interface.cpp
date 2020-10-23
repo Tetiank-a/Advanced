@@ -3,7 +3,7 @@
 #include <utility>
 #include <map>
 
-const int64_t MODULE = 1000000007;
+const int64_t MODULUS = 1000000007;
 
 struct Edge
 {
@@ -36,17 +36,13 @@ class Matrix {
 };
 
 // Matrix Multiplication
-Matrix MultiplicationOfMatrices(const Matrix& matrix_first,
-                                const Matrix& matrix_second);
+Matrix MultiplicationOfMatrices(const Matrix& matrix_left,
+                                const Matrix& matrix_right);
 
 // Exponentiation of a matrix
 Matrix MatrixInPower(const Matrix& matrix, int64_t power);
 
-// The number of possible paths from room#0 with given length
-int64_t SumCalculation(const Matrix& matrix, const int64_t& matrix_size);
-
 int64_t CountNumberOfWays(const int64_t& number_of_rooms,
-                          const int64_t& number_of_edges,
                           const int64_t& path_length,
                           const std::vector<Edge>& edges);
 
@@ -66,7 +62,6 @@ int main() {
     const auto& path_length = ReadNumber();
     const auto& edges = ReadEdges(number_of_edges);
     const auto& ways = CountNumberOfWays(number_of_rooms,
-                                         number_of_edges,
                                          path_length, edges);
     Write(ways);
 
