@@ -27,11 +27,11 @@ class Matrix {
     int64_t size_;
  public:
     int64_t GetSize() const;
-    Matrix(const int64_t& matrix_size, const int64_t& digit);
+    Matrix(const int64_t& matrix_size, const bool& digit);
     Matrix(const std::vector<Edge>& edges, const int64_t& matrix_size);
-    int64_t get(const int64_t& vertex_first,
-                const int64_t& vertex_second) const;
-    void set(const int64_t& vertex_first, const int64_t& vertex_second,
+    int64_t get(const int64_t& line,
+                const int64_t& column) const;
+    void set(const int64_t& line, const int64_t& column,
              const int64_t& value);
 };
 
@@ -40,12 +40,12 @@ int64_t Matrix::GetSize() const {
 }
 
 // Creating an identity matrix N*N, digit - 0 or 1
-Matrix::Matrix(const int64_t& matrix_size, const int64_t& digit) {
+Matrix::Matrix(const int64_t& matrix_size, const bool& digit) {
     const std::vector<int64_t> str(matrix_size, 0);
     for (int64_t i = 0; i < matrix_size; ++i)
         this->matrix_.push_back(str);
     for (int64_t i = 0; i < matrix_size; ++i)
-        this->matrix_[i][i] = digit;
+        this->matrix_[i][i] = int64_t(digit);
     this->size_ = matrix_size;
 }
 
@@ -60,14 +60,14 @@ Matrix::Matrix(const std::vector<Edge>& edges, const int64_t& matrix_size) {
     }
 }
 
-int64_t Matrix::get(const int64_t& vertex_first,
-                    const int64_t& vertex_second) const {
-    return this->matrix_[vertex_first][vertex_second];
+int64_t Matrix::get(const int64_t& line,
+                    const int64_t& column) const {
+    return this->matrix_[line][column];
 }
 
-void Matrix::set(const int64_t& vertex_first, const int64_t& vertex_second,
+void Matrix::set(const int64_t& line, const int64_t& column,
                  const int64_t& value) {
-    this->matrix_[vertex_first][vertex_second] = value;
+    this->matrix_[line][column] = value;
 }
 
 // Matrix Multiplication
