@@ -27,11 +27,11 @@ class Matrix {
     int64_t size_;
  public:
     int64_t GetSize() const;
-    Matrix(const int64_t& matrix_size, const int64_t& digit);
+    Matrix(const int64_t& matrix_size, const bool& digit);
     Matrix(const std::vector<Edge>& edges, const int64_t& matrix_size);
-    int64_t get(const int64_t& vertex_first,
-                const int64_t& vertex_second) const;
-    void set(const int64_t& vertex_first, const int64_t& vertex_second,
+    int64_t get(const int64_t& line,
+                const int64_t& column) const;
+    void set(const int64_t& line, const int64_t& column,
              const int64_t& value);
 };
 
