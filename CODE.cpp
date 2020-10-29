@@ -16,7 +16,7 @@ int64_t ReadNumber(std::istream& input = std::cin);
 
 // Creating and reading edges
 std::vector<Edge> ReadEdges(const int64_t& number_of_edges,
-                            std::istream& input = std::cin);
+    std::istream& input = std::cin);
 
 // Writing a number of possible variants
 void Write(const int64_t& ways, std::ostream& output = std::cout);
@@ -30,9 +30,9 @@ class Matrix {
     Matrix(const int64_t& matrix_size, const bool& digit);
     Matrix(const std::vector<Edge>& edges, const int64_t& matrix_size);
     int64_t get(const int64_t& line,
-                const int64_t& column) const;
+        const int64_t& column) const;
     void set(const int64_t& line, const int64_t& column,
-             const int64_t& value);
+        const int64_t& value);
 };
 
 int64_t Matrix::GetSize() const {
@@ -61,27 +61,39 @@ Matrix::Matrix(const std::vector<Edge>& edges, const int64_t& matrix_size) {
 }
 
 int64_t Matrix::get(const int64_t& line,
-                    const int64_t& column) const {
+    const int64_t& column) const {
+    if (line < 0 || line >= matrix_.size() || column < 0 ||
+        column >= matrix_[matrix_.size() - 1].size()) {
+        std::cout << "indexes of matrix are out of range";
+    }
     return this->matrix_[line][column];
 }
 
 void Matrix::set(const int64_t& line, const int64_t& column,
-                 const int64_t& value) {
+    const int64_t& value) {
+    if (line < 0 || line >= matrix_.size() || column < 0 ||
+        column >= matrix_[matrix_.size() - 1].size()) {
+        std::cout << "indexes of matrix are out of range";
+    }
     this->matrix_[line][column] = value;
 }
 
 // Matrix Multiplication
 Matrix MultiplicationOfMatrices(const Matrix& matrix_left,
-                                const Matrix& matrix_right) {
+    const Matrix& matrix_right) {
     const int64_t matrix_size = matrix_left.GetSize();
     Matrix matrix_result(matrix_size, 0);
     for (int64_t i = 0; i < matrix_size; ++i)
         for (int64_t j = 0; j < matrix_size; ++j) {
-            matrix_result.set(i, j, 0);
-            for (int64_t k = 0; k < matrix_size; ++k)
-                matrix_result.set(i, j, (matrix_left.get(i, k) *
-                    matrix_right.get(k, j) % MODULUS +
-                    matrix_result.get(i, j)) % MODULUS);
+            for (int64_t k = 0; k < matrix_size; ++k) {
+                int64_t number_of_ways_in_left = matrix_left.get(i, k);
+                int64_t number_of_ways_in_right = matrix_right.get(k, j);
+                int64_t current_number_of_ways = matrix_result.get(i, j);
+                int64_t number_of_ways = ((number_of_ways_in_left *
+                                          number_of_ways_in_right) % MODULUS +
+                                          current_number_of_ways) % MODULUS;
+                matrix_result.set(i, j, number_of_ways);
+            }
         }
     return matrix_result;
 }
@@ -93,7 +105,7 @@ Matrix MatrixInPower(const Matrix& matrix, int64_t power) {
     while (power) {
         if (power & 1)
             result_matrix = MultiplicationOfMatrices(result_matrix,
-                                                     delta_matrix);
+                delta_matrix);
         delta_matrix = MultiplicationOfMatrices(delta_matrix, delta_matrix);
         power >>= 1;
     }
@@ -101,8 +113,8 @@ Matrix MatrixInPower(const Matrix& matrix, int64_t power) {
 }
 
 int64_t CountNumberOfWays(const int64_t& number_of_rooms,
-                          const int64_t& path_length,
-                          const std::vector<Edge>& edges) {
+    const int64_t& path_length,
+    const std::vector<Edge>& edges) {
     Matrix rooms_matrix(edges, number_of_rooms);
     rooms_matrix = MatrixInPower(rooms_matrix, path_length);
     int64_t sum = 0;
@@ -118,15 +130,13 @@ int64_t ReadNumber(std::istream& input) {
 }
 
 std::vector<Edge> ReadEdges(const int64_t& number_of_edges,
-                            std::istream& input) {
+    std::istream& input) {
     int64_t x, y;
     std::vector<Edge> edges;
     for (int64_t i = 0; i < number_of_edges; ++i)
     {
-        input >> x >> y;
         Edge path;
-        path.vertex_from = x;
-        path.vertex_to = y;
+        input >> path.vertex_from >> path.vertex_to;
         edges.push_back(path);
     }
     return edges;
@@ -145,7 +155,7 @@ int main() {
     const auto& path_length = ReadNumber();
     const auto& edges = ReadEdges(number_of_edges);
     const auto& ways = CountNumberOfWays(number_of_rooms,
-                                         path_length, edges);
+        path_length, edges);
     Write(ways);
 
     return 0;
