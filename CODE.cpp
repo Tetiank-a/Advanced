@@ -131,7 +131,6 @@ int64_t ReadNumber(std::istream& input) {
 
 std::vector<Edge> ReadEdges(const int64_t& number_of_edges,
     std::istream& input) {
-    int64_t x, y;
     std::vector<Edge> edges;
     for (int64_t i = 0; i < number_of_edges; ++i)
     {
