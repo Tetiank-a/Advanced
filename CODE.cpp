@@ -188,8 +188,7 @@ int main() {
     const auto& path_length = ReadNumber();
     const auto& edges_not_checked_indexing = ReadEdges(number_of_edges);
     const auto& edges = VertexIndexingOneToZero(edges_not_checked_indexing);
-    const auto& ways = CountNumberOfWays(number_of_rooms,
-        path_length, edges);
+    const auto& ways = CountNumberOfWays(number_of_rooms, path_length, edges);
     Write(ways);
 
     return 0;
