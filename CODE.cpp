@@ -33,7 +33,7 @@ class Matrix {
              std::vector<int64_t>(number_of_columns, 0));
          if (digit) {
              if (number_of_strings != number_of_columns) {
-                 std::cout << "Impossible to create an identity matrix";
+                 throw std::runtime_error("Impossible to create a matrix");
                  exit(0);
              }
              for (int i = 0; i < number_of_strings; ++i) {
@@ -64,7 +64,7 @@ class Matrix {
                  const int64_t& column) const {
          if (line < 0 || line >= number_of_strings_ || column < 0 ||
              column >= number_of_columns_) {
-             std::cout << "Indexes of matrix are out of range";
+             throw std::runtime_error("Indexes of matrix are out of range");
              exit(0);
          }
 
@@ -76,7 +76,7 @@ class Matrix {
               const int64_t& value) {
          if (line < 0 || line >= number_of_strings_ || column < 0 ||
              column >= number_of_columns_) {
-             std::cout << "Indexes of matrix are out of range";
+             throw std::runtime_error("Indexes of matrix are out of range");
              exit(0);
          }
 
@@ -101,7 +101,7 @@ Matrix MultiplicationOfMatrices(const Matrix& matrix_left,
     const int64_t& columns_right_matrix = matrix_right.GetNumberOfColumns();
 
     if (columns_left_matrix != strings_right_matrix) {
-        std::cout << "Multiplication of matrixes is impossible";
+        throw std::runtime_error("Multiplication of matrixes is impossible");
         exit(0);
     }
 
@@ -131,7 +131,7 @@ Matrix MatrixInPower(const Matrix& matrix, int64_t power) {
     Matrix result_matrix(delta_matrix.GetNumberOfStrings(),
                          delta_matrix.GetNumberOfColumns(), true);
 
-    while (power) {
+    while (power != 0) {
         if (power % 2 != 0) {
             result_matrix = MultiplicationOfMatrices(result_matrix,
                                                      delta_matrix);
@@ -183,7 +183,6 @@ void Write(const int64_t& ways, std::ostream& output) {
 int main() {
     std::ios_base::sync_with_stdio(false);
     std::cin.tie(nullptr);
-
     const auto& number_of_rooms = ReadNumber();
     const auto& number_of_edges = ReadNumber();
     const auto& path_length = ReadNumber();
@@ -191,6 +190,5 @@ int main() {
     const auto& ways = CountNumberOfWays(number_of_rooms, path_length, edges);
 
     Write(ways);
-
     return 0;
 }
