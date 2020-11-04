@@ -1,11 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <utility>
-#include <map>
-#include <algorithm>
 
 const int64_t MODULUS = 1000000007;
-const int64_t INDEX = 1;
+const int64_t INDEX_SHIFT = 1;
 
 struct Edge {
     int64_t vertex_from;
@@ -32,11 +30,11 @@ class Matrix {
      Matrix(const int64_t& number_of_strings, const int64_t& number_of_columns,
             const bool& digit) {
          std::vector< std::vector<int64_t> > matrix(number_of_strings,
-                                                    std::vector<int64_t>
-                                                    (number_of_columns, 0));
+             std::vector<int64_t>(number_of_columns, 0));
          if (digit) {
              if (number_of_strings != number_of_columns) {
                  std::cout << "Impossible to create an identity matrix";
+                 exit(0);
              }
              for (int i = 0; i < number_of_strings; ++i) {
                  matrix[i][i] = 1;
@@ -49,12 +47,14 @@ class Matrix {
 
      Matrix(const std::vector<Edge>& edges, const int64_t& size) {
          std::vector< std::vector<int64_t> > matrix(size,
-                                                    std::vector<int64_t>
-                                                    (size, 0));
+             std::vector<int64_t>(size, 0));
+
          for (int64_t i = 0; i < edges.size(); ++i) {
-             matrix[edges[i].vertex_from - INDEX][edges[i].vertex_to -
-                                                  INDEX]++;
+             const int first_vertex = edges[i].vertex_from - INDEX_SHIFT;
+             const int second_vertex = edges[i].vertex_to - INDEX_SHIFT;
+             matrix[first_vertex][second_vertex]++;
          }
+
          matrix_ = matrix;
          number_of_strings_ = size;
          number_of_columns_ = size;
@@ -65,7 +65,9 @@ class Matrix {
          if (line < 0 || line >= number_of_strings_ || column < 0 ||
              column >= number_of_columns_) {
              std::cout << "Indexes of matrix are out of range";
+             exit(0);
          }
+
          return matrix_[line][column];
      }
 
@@ -75,7 +77,9 @@ class Matrix {
          if (line < 0 || line >= number_of_strings_ || column < 0 ||
              column >= number_of_columns_) {
              std::cout << "Indexes of matrix are out of range";
+             exit(0);
          }
+
          matrix_[line][column] = value;
      }
 
@@ -95,25 +99,29 @@ Matrix MultiplicationOfMatrices(const Matrix& matrix_left,
     const int64_t& columns_left_matrix = matrix_left.GetNumberOfColumns();
     const int64_t& strings_right_matrix = matrix_right.GetNumberOfStrings();
     const int64_t& columns_right_matrix = matrix_right.GetNumberOfColumns();
+
     if (columns_left_matrix != strings_right_matrix) {
         std::cout << "Multiplication of matrixes is impossible";
+        exit(0);
     }
+
     Matrix matrix_result(strings_left_matrix, columns_right_matrix, false);
+
     for (int64_t i = 0; i < strings_left_matrix; ++i) {
         for (int64_t j = 0; j < columns_right_matrix; ++j) {
             for (int64_t k = 0; k < columns_left_matrix; ++k) {
-                const int64_t number_of_ways_in_left = matrix_left.Get(i, k);
-                const int64_t number_of_ways_in_right = matrix_right.Get(k, j);
-                const int64_t current_number_of_ways = matrix_result.Get(i, j);
-                const int64_t number_of_ways = ((number_of_ways_in_left *
-                                                 number_of_ways_in_right) %
-                                                 MODULUS +
-                                                 current_number_of_ways) %
-                                                 MODULUS;
-                matrix_result.Set(i, j, number_of_ways);
+                const int64_t left_cell = matrix_left.Get(i, k);
+                const int64_t right_cell = matrix_right.Get(k, j);
+                const int64_t result_cell = matrix_result.Get(i, j);
+                const int64_t result_cell_updated = ((left_cell * right_cell) %
+                                                      MODULUS + result_cell) %
+                                                      MODULUS;
+
+                matrix_result.Set(i, j, result_cell_updated);
             }
         }
     }
+
     return matrix_result;
 }
 
@@ -122,6 +130,7 @@ Matrix MatrixInPower(const Matrix& matrix, int64_t power) {
     Matrix delta_matrix = matrix;
     Matrix result_matrix(delta_matrix.GetNumberOfStrings(),
                          delta_matrix.GetNumberOfColumns(), true);
+
     while (power) {
         if (power % 2 != 0) {
             result_matrix = MultiplicationOfMatrices(result_matrix,
@@ -130,6 +139,7 @@ Matrix MatrixInPower(const Matrix& matrix, int64_t power) {
         delta_matrix = MultiplicationOfMatrices(delta_matrix, delta_matrix);
         power /= 2;
     }
+
     return result_matrix;
 }
 
@@ -139,9 +149,11 @@ int64_t CountNumberOfWays(const int64_t& number_of_rooms,
     const Matrix rooms_matrix(edges, number_of_rooms);
     const Matrix result_matrix = MatrixInPower(rooms_matrix, path_length);
     int64_t sum = 0;
+
     for (int64_t i = 0; i < number_of_rooms; ++i) {
         sum = (sum + result_matrix.Get(0, i)) % MODULUS;
     }
+
     return sum;
 }
 
@@ -154,12 +166,13 @@ int64_t ReadNumber(std::istream& input) {
 std::vector<Edge> ReadEdges(const int64_t& number_of_edges,
                             std::istream& input) {
     std::vector<Edge> edges;
-    for (int64_t i = 0; i < number_of_edges; ++i)
-    {
+
+    for (int64_t i = 0; i < number_of_edges; ++i) {
         Edge path;
         input >> path.vertex_from >> path.vertex_to;
         edges.push_back(path);
     }
+
     return edges;
 }
 
@@ -176,6 +189,7 @@ int main() {
     const auto& path_length = ReadNumber();
     const auto& edges = ReadEdges(number_of_edges);
     const auto& ways = CountNumberOfWays(number_of_rooms, path_length, edges);
+
     Write(ways);
 
     return 0;
