@@ -20,12 +20,10 @@ int64_t ReadNumber(std::istream& input = std::cin) {
 // Creating and reading edges
 std::vector<Edge> ReadEdges(const int64_t& number_of_edges,
                             std::istream& input = std::cin) {
-    std::vector<Edge> edges;
+    std::vector<Edge> edges(number_of_edges);
 
     for (int64_t i = 0; i < number_of_edges; ++i) {
-        Edge path;
-        input >> path.vertex_from >> path.vertex_to;
-        edges.push_back(path);
+        input >> edges[i].vertex_from >> edges[i].vertex_to;
     }
 
     return edges;
@@ -144,6 +142,10 @@ class SquareMatrix : public Matrix {
          for (int64_t i = 0; i < edges.size(); ++i) {
              const int first_vertex = edges[i].vertex_from - INDEX_SHIFT;
              const int second_vertex = edges[i].vertex_to - INDEX_SHIFT;
+             if (first_vertex < 0 || first_vertex >= size ||
+                 second_vertex < 0 || second_vertex >= size) {
+                 throw std::runtime_error("Indexes of matrix are out of range");
+             }
              matrix[first_vertex][second_vertex]++;
          }
 
@@ -182,9 +184,10 @@ class SquareMatrix : public Matrix {
 
      SquareMatrix Multiplication(SquareMatrix matrix_right_square) {
          Matrix matrix_left = this->Convert_to_Matrix();
-         Matrix matrix_right = matrix_right_square.Convert_to_Matrix();
-         Matrix result_matrix = matrix_left.Multiplication(matrix_right);
-         return SquareMatrix(result_matrix);
+         const Matrix matrix_right = matrix_right_square.Convert_to_Matrix();
+         const Matrix result_matrix = matrix_left.Multiplication(matrix_right);
+         SquareMatrix result_square_matrix = SquareMatrix(result_matrix);
+         return result_square_matrix;
      }
 
      // Exponentiation of a matrix
