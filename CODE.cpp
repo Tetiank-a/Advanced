@@ -129,7 +129,7 @@ class SquareMatrix : public Matrix {
      SquareMatrix(const int64_t& number_of_strings,
                   const int64_t& number_of_columns, const bool& digit) :
          Matrix(number_of_strings, number_of_columns) {
-         if (digit == true) {
+         if (digit) {
              for (int i = 0; i < number_of_strings; ++i) {
                  matrix_[i][i] = 1;
              }
