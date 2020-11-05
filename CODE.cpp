@@ -11,14 +11,30 @@ struct Edge {
 };
 
 // Reading numbers
-int64_t ReadNumber(std::istream& input = std::cin);
+int64_t ReadNumber(std::istream& input = std::cin) {
+    int64_t value;
+    input >> value;
+    return value;
+}
 
 // Creating and reading edges
 std::vector<Edge> ReadEdges(const int64_t& number_of_edges,
-    std::istream& input = std::cin);
+                            std::istream& input = std::cin) {
+    std::vector<Edge> edges;
+
+    for (int64_t i = 0; i < number_of_edges; ++i) {
+        Edge path;
+        input >> path.vertex_from >> path.vertex_to;
+        edges.push_back(path);
+    }
+
+    return edges;
+}
 
 // Writing a number of possible variants
-void Write(const int64_t& ways, std::ostream& output = std::cout);
+void Write(const int64_t& ways, std::ostream& output = std::cout) {
+    output << ways << '\n';
+}
 
 class Matrix {
  protected:
@@ -48,7 +64,7 @@ class Matrix {
     }
 
     int64_t Get(const int64_t& line,
-        const int64_t& column) const {
+                const int64_t& column) const {
         if (line < 0 || line >= number_of_strings_ || column < 0 ||
             column >= number_of_columns_) {
             throw std::runtime_error("Indexes of matrix are out of range");
@@ -57,8 +73,8 @@ class Matrix {
     }
 
     void Set(const int64_t& line,
-        const int64_t& column,
-        const int64_t& value) {
+             const int64_t& column,
+             const int64_t& value) {
         if (line < 0 || line >= number_of_strings_ || column < 0 ||
             column >= number_of_columns_) {
             throw std::runtime_error("Indexes of matrix are out of range");
@@ -113,7 +129,7 @@ class Matrix {
 class SquareMatrix : public Matrix {
  public:
      SquareMatrix(const int64_t& number_of_strings,
-                  const int64_t& number_of_columns, bool digit) :
+                  const int64_t& number_of_columns, const bool& digit) :
          Matrix(number_of_strings, number_of_columns) {
          if (digit == true) {
              for (int i = 0; i < number_of_strings; ++i) {
@@ -160,16 +176,22 @@ class SquareMatrix : public Matrix {
              for (int j = 0; j < number_of_columns_; ++j) {
                  matrix[i][j] = matrix_[i][j];
              }
-         Matrix result_matrix(matrix);
+         const Matrix result_matrix(matrix);
          return result_matrix;
+     }
+
+     SquareMatrix Multiplication(SquareMatrix matrix_right_square) {
+         Matrix matrix_left = this->Convert_to_Matrix();
+         Matrix matrix_right = matrix_right_square.Convert_to_Matrix();
+         Matrix result_matrix = matrix_left.Multiplication(matrix_right);
+         return SquareMatrix(result_matrix);
      }
 
      // Exponentiation of a matrix
      SquareMatrix MatrixInPower(int64_t power) {
-         Matrix delta_matrix = this->Convert_to_Matrix();
-         SquareMatrix result_matrix_square(delta_matrix.GetNumberOfStrings(),
+         SquareMatrix delta_matrix = *this;
+         SquareMatrix result_matrix(delta_matrix.GetNumberOfStrings(),
              delta_matrix.GetNumberOfColumns(), true);
-         Matrix result_matrix = result_matrix_square.Convert_to_Matrix();
          while (power != 0) {
              if (power % 2 != 0) {
                  result_matrix = result_matrix.Multiplication(delta_matrix);
@@ -177,14 +199,13 @@ class SquareMatrix : public Matrix {
              delta_matrix = delta_matrix.Multiplication(delta_matrix);
              power /= 2;
          }
-         SquareMatrix square_matrix(result_matrix);
-         return square_matrix;
+         return result_matrix;
      }
 };
 
 int64_t CountNumberOfWays(const int64_t& number_of_rooms,
-    const int64_t& path_length,
-    const std::vector<Edge>& edges) {
+                          const int64_t& path_length,
+                          const std::vector<Edge>& edges) {
     SquareMatrix rooms_matrix(edges, number_of_rooms);
     const SquareMatrix result_matrix = rooms_matrix.MatrixInPower(path_length);
     int64_t sum = 0;
@@ -194,29 +215,6 @@ int64_t CountNumberOfWays(const int64_t& number_of_rooms,
     }
 
     return sum;
-}
-
-int64_t ReadNumber(std::istream& input) {
-    int64_t value;
-    input >> value;
-    return value;
-}
-
-std::vector<Edge> ReadEdges(const int64_t& number_of_edges,
-    std::istream& input) {
-    std::vector<Edge> edges;
-
-    for (int64_t i = 0; i < number_of_edges; ++i) {
-        Edge path;
-        input >> path.vertex_from >> path.vertex_to;
-        edges.push_back(path);
-    }
-
-    return edges;
-}
-
-void Write(const int64_t& ways, std::ostream& output) {
-    output << ways << '\n';
 }
 
 int main() {
